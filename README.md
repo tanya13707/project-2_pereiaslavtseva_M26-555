@@ -6,7 +6,7 @@
 
 ```bash
 uv sync
-uv run project
+uv run database
 ```
 
 
