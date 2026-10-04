@@ -33,3 +33,7 @@ exit
 ```
 
 Названия таблиц и их столбцы хранятся в файле `db_meta.json`.
+
+## Демонстрация
+
+[![asciicast](https://asciinema.org/a/a2SJSuDrjqoZEqkZ.svg)](https://asciinema.org/a/a2SJSuDrjqoZEqkZ)
