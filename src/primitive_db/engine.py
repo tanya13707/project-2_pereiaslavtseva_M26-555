@@ -132,7 +132,10 @@ def run():
             table_name = args[1]
             table_count = len(metadata)
 
-            metadata = drop_table(metadata, table_name)
+            updated_metadata = drop_table(metadata, table_name)
+            if updated_metadata is None:
+                continue
+            metadata = updated_metadata
 
             if len(metadata) < table_count:
                 save_metadata(META_FILE, metadata)
@@ -165,9 +168,12 @@ def run():
                 values = [
                     parse_value(value) for value in values_text.split(",")
                 ]
-                table_data = insert(metadata, table_name, values)
             except ValueError as error:
                 print(error)
+                continue
+
+            table_data = insert(metadata, table_name, values)
+            if table_data is None:
                 continue
 
             save_table_data(table_name, table_data)
@@ -231,11 +237,15 @@ def run():
                 continue
             table_data = load_table_data(table_name)
             records = select(table_data, where_clause)
+            if records is None:
+                continue
             if not records:
                 print("Записи по условию не найдены.")
                 continue
 
             table_data = update(table_data, set_clause, where_clause)
+            if table_data is None:
+                continue
             save_table_data(table_name, table_data)
 
             for record in records:
@@ -291,11 +301,15 @@ def run():
                 continue
             table_data = load_table_data(table_name)
             records = select(table_data, where_clause)
+            if records is None:
+                continue
             if not records:
                 print("Записи по условию не найдены.")
                 continue
 
             table_data = delete(table_data, where_clause)
+            if table_data is None:
+                continue
             save_table_data(table_name, table_data)
 
             for record in records:
@@ -367,6 +381,8 @@ def run():
 
             table_data = load_table_data(table_name)
             records = select(table_data, where_clause)
+            if records is None:
+                continue
             columns = [
                 column.split(":")[0] for column in metadata[table_name]
             ]
