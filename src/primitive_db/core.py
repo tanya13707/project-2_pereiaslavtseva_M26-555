@@ -1,7 +1,16 @@
 from primitive_db.constants import TYPE_MAP, VALID_TYPES
+from primitive_db.decorators import (
+    confirm_action,
+    create_cacher,
+    handle_db_errors,
+    log_time,
+)
 from primitive_db.utils import load_table_data
 
+select_cache = create_cacher()
 
+
+@handle_db_errors
 def create_table(metadata, table_name, columns):
     """Создаёт новую таблицу и проверяет её столбцы."""
     if table_name in metadata:
@@ -37,6 +46,8 @@ def create_table(metadata, table_name, columns):
     return metadata
 
 
+@handle_db_errors
+@confirm_action("удаление таблицы")
 def drop_table(metadata, table_name):
     """Удаляет таблицу из метаданных."""
     if table_name not in metadata:
@@ -48,6 +59,8 @@ def drop_table(metadata, table_name):
     return metadata
 
 
+@handle_db_errors
+@log_time
 def insert(metadata, table_name, values):
     """Добавляет новую запись в таблицу."""
     if table_name not in metadata:
@@ -86,30 +99,42 @@ def insert(metadata, table_name, values):
     return table_data            
 
 
+@handle_db_errors
+@log_time
 def select(table_data, where_clause=None):
-    """Возвращает все записи или записи по условию."""
-    if where_clause is None:
-        return table_data
+    """Возвращает записи, кэшируя результаты одинаковых запросов."""
+    cache_key = repr((table_data, where_clause))
 
-    selected_records = []
+    def find_indices():
+        """Находит позиции записей, подходящих под условие."""
+        selected_indices = []
 
-    for record in table_data:
-        matches = True
+        for index, record in enumerate(table_data):
+            if where_clause is None:
+                selected_indices.append(index)
+                continue
 
-        for column_name, value in where_clause.items():
-            if record[column_name] != value:
-                matches = False
-                break
+            matches = True
+            for column_name, value in where_clause.items():
+                if record[column_name] != value:
+                    matches = False
+                    break
 
-        if matches:
-            selected_records.append(record)
+            if matches:
+                selected_indices.append(index)
 
-    return selected_records
+        return selected_indices
+
+    indices = select_cache(cache_key, find_indices)
+    return [table_data[index] for index in indices]
 
 
+@handle_db_errors
 def update(table_data, set_clause, where_clause):
     """Обновляет записи по условию."""
     selected_records = select(table_data, where_clause)
+    if selected_records is None:
+        return None
 
     for record in selected_records:
         record.update(set_clause)
@@ -117,9 +142,14 @@ def update(table_data, set_clause, where_clause):
     return table_data
 
 
+@handle_db_errors
+@confirm_action("удаление записей")
 def delete(table_data, where_clause):
     """Удаляет записи по условию."""
     selected_records = select(table_data, where_clause)
+    if selected_records is None:
+        return None
+    
     remaining_records = []
 
     for record in table_data:
