@@ -22,6 +22,7 @@ from primitive_db.utils import (
 
 
 def welcome():
+    """Выводит приветствие и обрабатывает команды help и exit."""
     print("Первая попытка запустить проект!")
     print()
     print("***")
@@ -120,7 +121,10 @@ def run():
             columns = args[2:]
             table_count = len(metadata)
 
-            metadata = create_table(metadata, table_name, columns)
+            updated_metadata = create_table(metadata, table_name, columns)
+            if updated_metadata is None:
+                continue
+            metadata = updated_metadata
 
             if len(metadata) > table_count:
                 save_metadata(META_FILE, metadata)

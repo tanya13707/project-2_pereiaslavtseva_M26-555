@@ -10,6 +10,7 @@ from primitive_db.utils import load_table_data
 select_cache = create_cacher()
 
 
+@handle_db_errors
 def create_table(metadata, table_name, columns):
     """Создаёт новую таблицу и проверяет её столбцы."""
     if table_name in metadata:
@@ -45,6 +46,7 @@ def create_table(metadata, table_name, columns):
     return metadata
 
 
+@handle_db_errors
 @confirm_action("удаление таблицы")
 def drop_table(metadata, table_name):
     """Удаляет таблицу из метаданных."""

@@ -70,6 +70,13 @@ info users
 exit
 ```
 
+## Декораторы и кэширование
+
+- Обработка ошибок выводит понятные сообщения при ошибках в данных.
+- Удаление таблиц и записей требует подтверждения: `y` - выполнить, другой ответ - отменить.
+- Для `insert` и `select` выводится время выполнения в секундах.
+- Результаты одинаковых запросов `select` кэшируются через замыкание. При изменении данных результат вычисляется заново.
+
 ## Демонстрация
 
 [![asciicast](https://asciinema.org/a/a2SJSuDrjqoZEqkZ.svg)](https://asciinema.org/a/a2SJSuDrjqoZEqkZ)
@@ -77,3 +84,7 @@ exit
 ### CRUD-операции
 
 [![asciicast](https://asciinema.org/a/7zzDXfiPTtReB8Jw.svg)](https://asciinema.org/a/7zzDXfiPTtReB8Jw)
+
+### Полная демонстрация с декораторами и кэшированием
+
+[![asciicast](https://asciinema.org/a/bLTRyTZo2h0dMEZA.svg)](https://asciinema.org/a/bLTRyTZo2h0dMEZA)

@@ -1,7 +1,7 @@
 [project]
 name = "primitive-db"
 version = "0.1.0"
-description = "Add your description here"
+description = "Консольная база данных с CRUD-операциями, хранением в JSON и декораторами"
 readme = "README.md"
 authors = [
     { name = "tanya13707", email = "tanyanyusha@gmail.com" }
@@ -22,7 +22,7 @@ build-backend = "uv_build"
 [tool.ruff]
 line-length = 88
 target-version = "py312"
-exclude = ["venv", ".venv", "dist", "__pycache__"]
+exclude = ["venv", ".venv", ".venv-win", "dist", "__pycache__"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I"]

@@ -36,4 +36,4 @@ def save_table_data(table_name, data):
     filepath = os.path.join(DATA_DIR, f"{table_name}.json")
 
     with open(filepath, "w", encoding="utf-8") as file:
-        json.dump(data, file, ensure_ascii=False, indent=4)    
+        json.dump(data, file, ensure_ascii=False, indent=4)
